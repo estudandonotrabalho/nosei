@@ -53,6 +53,13 @@
     button:hover {
         background: #0056b3;
     }
+    .btn-limpar {
+        background: #dc3545;
+        margin-left: 10px;
+    }
+    .btn-limpar:hover {
+        background: #a71d2a;
+    }
     .result-container {
         margin-top: 20px;
     }
@@ -100,7 +107,10 @@ Data e hora"></textarea>
     <label for="acoes">AÇÕES REALIZADAS / ORIENTAÇÕES:</label>
     <textarea id="acoes" rows="3"></textarea>
 
-    <button onclick="gerarRelatorio()">Gerar Relatório</button>
+    <div>
+        <button onclick="gerarRelatorio()">Gerar Relatório</button>
+        <button class="btn-limpar" onclick="limparCampos()">Limpar</button>
+    </div>
 
     <div class="result-container">
         <h3>Resultado:</h3>
@@ -146,6 +156,14 @@ function gerarRelatorio() {
                     + `AÇÕES REALIZADAS / ORIENTAÇÕES\n${acoes}`;
 
     document.getElementById("resultado").textContent = resultado;
+}
+
+function limparCampos() {
+    document.getElementById("dadosCliente").value = "";
+    document.getElementById("solicitacao").value = "";
+    document.getElementById("verificacoes").value = "";
+    document.getElementById("acoes").value = "";
+    document.getElementById("resultado").textContent = "";
 }
 
 function copiarTexto() {
