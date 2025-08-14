@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Gerador de Relatórios</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f8f9fa;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .container {
+        background: #fff;
+        padding: 20px 25px;
+        border-radius: 10px;
+        max-width: 700px;
+        width: 100%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+        color: #444;
+    }
+    textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        resize: vertical;
+    }
+    button {
+        margin-top: 15px;
+        padding: 10px 15px;
+        cursor: pointer;
+        background: #007bff;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .result-container {
+        margin-top: 20px;
+    }
+    pre {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Gerador de Relatório de Atendimentos</h2>
+
+    <label for="meio">Meio de Contato:</label>
+    <select id="meio">
+        <option value="telefone">Telefone</option>
+        <option value="presencial">Presencial</option>
+        <option value="whatsapp">WhatsApp</option>
+    </select>
+
+    <label for="dadosCliente">Cole aqui as informações do cliente:</label>
+    <textarea id="dadosCliente" rows="5" placeholder="Exemplo WhatsApp:
+Cole aqui as infos do fluctus, exemplo:
+Nome do Cliente
+55 (55) 55555-5555
+00 (00) 00000-0000
+Protocolo: 98545678987654567
+Data e hora
+
+Exemplo telefone/presencial. Coloque as infos nessa ordem:
+Nome do cliente
+Número do cliente ou ramal de contato
+Data e hora"></textarea>
+
+    <label for="solicitacao">SOLICITAÇÃO DO CLIENTE:</label>
+    <textarea id="solicitacao" rows="3"></textarea>
+
+    <label for="verificacoes">VERIFICAÇÕES:</label>
+    <textarea id="verificacoes" rows="3"></textarea>
+
+    <label for="acoes">AÇÕES REALIZADAS / ORIENTAÇÕES:</label>
+    <textarea id="acoes" rows="3"></textarea>
+
+    <button onclick="gerarRelatorio()">Gerar Relatório</button>
+
+    <div class="result-container">
+        <h3>Resultado:</h3>
+        <pre id="resultado"></pre>
+        <button onclick="copiarTexto()">Copiar Texto</button>
+    </div>
+</div>
+
+<script>
+function formatarCabecalho(meio, texto) {
+    const linhas = texto.trim().split("\n").map(l => l.trim()).filter(l => l);
+    const agora = new Date();
+    const dataHora = agora.toLocaleDateString('pt-BR') + " " +
+                     agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+    if (meio === "whatsapp" && linhas.length >= 4) {
+        const nome = linhas[0];
+        const numeroCliente = linhas[1];
+        const protocolo = linhas.find(l => l.startsWith("Protocolo:")) || "";
+        return `${nome}  // ${numeroCliente} via fluctus  // ${protocolo} // ${dataHora}`;
+    }
+    if (meio === "telefone" && linhas.length >= 2) {
+        return `${linhas[0]}  // ${linhas[1]} via telefone  // ${dataHora}`;
+    }
+    if (meio === "presencial" && linhas.length >= 1) {
+        return `${linhas[0]}  // atendimento presencial  // ${dataHora}`;
+    }
+    return texto;
+}
+
+function gerarRelatorio() {
+    const meio = document.getElementById("meio").value;
+    const dadosCliente = document.getElementById("dadosCliente").value;
+    const cabecalho = formatarCabecalho(meio, dadosCliente);
+
+    const solicitacao = document.getElementById("solicitacao").value.trim();
+    const verificacoes = document.getElementById("verificacoes").value.trim();
+    const acoes = document.getElementById("acoes").value.trim();
+
+    const resultado = `${cabecalho ? cabecalho + "\n\n" : ""}` 
+                    + `SOLICITAÇÃO DO CLIENTE\n${solicitacao}\n\n` 
+                    + `VERIFICAÇÕES\n${verificacoes}\n\n` 
+                    + `AÇÕES REALIZADAS / ORIENTAÇÕES\n${acoes}`;
+
+    document.getElementById("resultado").textContent = resultado;
+}
+
+function copiarTexto() {
+    const texto = document.getElementById("resultado").textContent;
+    navigator.clipboard.writeText(texto).then(() => {
+        alert("Relatório copiado para a área de transferência!");
+    });
+}
+</script>
+
+</body>
+</html>
